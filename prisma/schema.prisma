@@ -12,9 +12,10 @@ datasource db {
 }
 
 model User {
-  id         String  @id @default(uuid())
-  neosUserId String? @unique
-  discordId  String? @unique
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  neosUserId String?  @unique
+  discordId  String?  @unique
   logs       Log[]
 }
 
