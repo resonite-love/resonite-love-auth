@@ -6,6 +6,7 @@ import cors from 'cors';
 import fs from 'fs';
 import {Neos} from 'neos-client';
 import {createViteDevServer} from "./viteServer.mjs";
+import RequestWithUser = Express.RequestWithUser;
 
 if (!process.env.NEOS_USERNAME || !process.env.NEOS_PASSWORD) {
   throw new Error('NEOS_USERNAME or NEOS_PASSWORD not set')
@@ -31,7 +32,7 @@ app.use(cors({
   origin: 'https://v2.neauth.app/',
 }))
 
-if(process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "production") {
   app.use(express.static('front/dist'))
 } else {
   createViteDevServer("./front").then(({app: viteApp}) => {
@@ -40,9 +41,53 @@ if(process.env.NODE_ENV === "production") {
 }
 
 
-
 // <認証コード, userID>のマップ
-const tokenMap = new Map<string,string>()
+const tokenMap = new Map<string, string>()
+
+
+const checkTokenMiddleware = async (req: RequestWithUser, res: express.Response, next: express.NextFunction) => {
+  const refreshToken = req.cookies.refresh_token
+
+  if (!refreshToken) {
+    res.status(400).json({
+      success: false,
+      message: "リフレッシュトークンがありません"
+    })
+    return
+  }
+
+  try {
+    const {payload} = await jwtVerify(refreshToken, privateKey, {
+      algorithms: ['EdDSA']
+    })
+
+    const userId = payload.id as string
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId
+      }
+    })
+
+    if (!user) {
+      res.status(400).json({
+        success: false,
+        message: "ユーザーが見つかりません"
+      })
+      return
+    }
+
+    req.user = user
+    next()
+
+  } catch (e) {
+    res.clearCookie("refresh_token").status(400).json({
+      success: false,
+      message: "リフレッシュトークンが間違っています"
+    })
+    return
+  }
+}
 
 // 未ログイン時 ログインリクエストを受けて認証コードを送る
 app.post('/api/loginRequest', async (req, res) => {
@@ -76,7 +121,7 @@ app.post('/api/login', async (req, res) => {
       }
     })
 
-    if(!user) {
+    if (!user) {
       user = await prisma.user.create({
         data: {
           neosUserId: userId,
@@ -126,38 +171,11 @@ app.post('/api/login', async (req, res) => {
   }
 })
 
-app.post('/api/refresh', async (req, res) => {
-  const refreshToken = req.cookies.refresh_token
+app.post('/api/refresh', checkTokenMiddleware, async (req: RequestWithUser, res) => {
 
-  if (!refreshToken) {
-    res.status(400).json({
-      success: false,
-      message: "リフレッシュトークンがありません"
-    })
-    return
-  }
+  const user = req.user
 
-  const {payload} = await jwtVerify(refreshToken, privateKey, {
-    algorithms: ['EdDSA']
-  })
-
-  const userId = payload.id as string
-
-  if (!userId) {
-    res.status(400).json({
-      success: false,
-      message: "リフレッシュトークンが間違っています"
-    })
-    return
-  }
-
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId
-    }
-  })
-
-  if(!user) {
+  if (!user) {
     res.status(400).json({
       success: false,
       message: "ユーザーが見つかりません"
@@ -169,7 +187,7 @@ app.post('/api/refresh', async (req, res) => {
     data: {
       user: {
         connect: {
-          id: userId
+          id: user.id
         }
       },
       type: "refresh",
@@ -190,50 +208,14 @@ app.post('/api/refresh', async (req, res) => {
   })
 })
 
-app.post("/api/claim", async (req, res) => {
-  const refreshToken = req.cookies.refresh_token
-
-  if (!refreshToken) {
-    res.json({
-      success: false,
-      message: "リフレッシュトークンがありません"
-    })
-    return
-  }
-
-  const {payload} = await jwtVerify(refreshToken, privateKey, {
-    algorithms: ['EdDSA']
-  })
-
-  const userId = payload.id as string
-
-  if (!userId) {
-    res.json({
-      success: false,
-      message: "リフレッシュトークンが間違っています"
-    })
-    return
-  }
-
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId
-    }
-  })
-
-  if(!user) {
-    res.status(400).json({
-      success: false,
-      message: "ユーザーが見つかりません"
-    })
-    return
-  }
+app.post("/api/claim", checkTokenMiddleware, async (req: RequestWithUser, res) => {
+  const user = req.user
 
   await prisma.log.create({
     data: {
       user: {
         connect: {
-          id: userId
+          id: user.id
         }
       },
       type: "claim",
@@ -260,27 +242,8 @@ app.post("/api/logout", async (_, res) => {
   return
 })
 
-app.get("/api/user", async (req, res) => {
-  const refreshToken = req.cookies.refresh_token
-
-  if (!refreshToken) {
-    res.status(400).json({
-      success: false,
-      message: "リフレッシュトークンがありません"
-    })
-    return
-  }
-
-  const {payload} = await jwtVerify(refreshToken, privateKey, {
-    algorithms: ['EdDSA']
-  })
-
-  const user = await prisma.user.findUnique({
-    where: {
-      id: payload.id as string
-    }
-  })
-
+app.get("/api/user", checkTokenMiddleware, async (req: RequestWithUser, res) => {
+  const user = req.user
   return res.json({
     success: true,
     data: user
@@ -300,7 +263,7 @@ app.post("/api/oauth/discord", async (req, res) => {
   const code = req.body.code as string
   const redirectUri = req.body.redirectUri as string
 
-  if(!code) {
+  if (!code) {
     return res.json({
       success: false,
       message: "codeがありません"
@@ -315,7 +278,7 @@ app.post("/api/oauth/discord", async (req, res) => {
     }
   })
 
-  if(!user) {
+  if (!user) {
     res.json({
       success: false,
       message: "Discordと連携されていません"
@@ -331,7 +294,7 @@ app.post("/api/oauth/discord", async (req, res) => {
         }
       },
       type: "loginWithDiscord",
-      data: { discordId: id }
+      data: {discordId: id}
     }
   })
 
@@ -348,34 +311,9 @@ app.post("/api/oauth/discord", async (req, res) => {
   })
 })
 
-app.delete("/api/oauth/discord", async (req, res) => {
-  const refreshToken = req.cookies.refresh_token
+app.delete("/api/oauth/discord", checkTokenMiddleware, async (req: RequestWithUser, res) => {
 
-  if (!refreshToken) {
-    res.status(400).json({
-      success: false,
-      message: "リフレッシュトークンがありません"
-    })
-    return
-  }
-
-  const {payload} = await jwtVerify(refreshToken, privateKey, {
-    algorithms: ['EdDSA']
-  })
-
-  const user = await prisma.user.findUnique({
-    where: {
-      id: payload.id as string
-    }
-  })
-
-  if(!user) {
-    res.status(400).json({
-      success: false,
-      message: "ユーザーが見つかりません"
-    })
-    return
-  }
+  const user = req.user
 
   await prisma.user.update({
     where: {
@@ -394,7 +332,7 @@ app.delete("/api/oauth/discord", async (req, res) => {
         }
       },
       type: "unlinkDiscord",
-      data: { discordId: user.discordId }
+      data: {discordId: user.discordId}
     }
   })
 
@@ -404,43 +342,18 @@ app.delete("/api/oauth/discord", async (req, res) => {
   return
 })
 
-app.post("/api/oauth/discord/link", async (req, res) => {
+app.post("/api/oauth/discord/link", checkTokenMiddleware, async (req: RequestWithUser, res) => {
   const code = req.body.code as string
   const redirectUri = req.body.redirectUri as string
-  const refreshToken = req.cookies.refresh_token
 
-  if(!code) {
+  if (!code) {
     return res.json({
       success: false,
       message: "codeがありません"
     })
   }
 
-  if (!refreshToken) {
-    res.status(400).json({
-      success: false,
-      message: "リフレッシュトークンがありません"
-    })
-    return
-  }
-
-  const {payload} = await jwtVerify(refreshToken, privateKey, {
-    algorithms: ['EdDSA']
-  })
-
-  const user = await prisma.user.findUnique({
-    where: {
-      id: payload.id as string
-    }
-  })
-
-  if(!user) {
-    res.status(400).json({
-      success: false,
-      message: "ユーザーが見つかりません"
-    })
-    return
-  }
+  const user = req.user
 
   const id = await getDiscordUserId(code, redirectUri)
 
@@ -450,7 +363,7 @@ app.post("/api/oauth/discord/link", async (req, res) => {
     }
   })
 
-  if(tmpUser) {
+  if (tmpUser) {
     res.json({
       success: false,
       message: "既にDiscordと連携されています"
@@ -489,7 +402,7 @@ app.listen(3000, () => {
   console.log('Server is running');
 })
 
-const getDiscordUserId = async (code: string, redirectUri: string) =>  {
+const getDiscordUserId = async (code: string, redirectUri: string) => {
   const clientId = process.env.DISCORD_CLIENT_ID as string
   const clientSecret = process.env.DISCORD_CLIENT_SECRET as string
 
@@ -508,14 +421,14 @@ const getDiscordUserId = async (code: string, redirectUri: string) =>  {
     }),
   });
   const discordAuthResult = await result.json();
-  const { access_token } = discordAuthResult;
+  const {access_token} = discordAuthResult;
   // get discord userId
   const discordUser = await fetch('https://discord.com/api/users/@me', {
     headers: {
       Authorization: `Bearer ${access_token}`,
     },
   });
-  const { id } = await discordUser.json();
+  const {id} = await discordUser.json();
   return id.toString()
 }
 
