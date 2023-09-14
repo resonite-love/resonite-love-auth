@@ -56,7 +56,6 @@ const tokenMap = new Map<string, string>()
 const checkTokenMiddleware = async (req: RequestWithUser, res: express.Response, next: express.NextFunction) => {
   const refreshToken = req.cookies.refresh_token
 
-
   if (!refreshToken) {
     res.status(400).json({
       success: false,
@@ -71,6 +70,16 @@ const checkTokenMiddleware = async (req: RequestWithUser, res: express.Response,
     })
 
     const userId = payload.id as string
+
+    const long = payload.long as boolean
+
+    if (!long) {
+      res.status(400).json({
+        success: false,
+        message: "リフレッシュトークンではありません"
+      })
+      return
+    }
 
     const user = await prisma.user.findUnique({
       where: {
@@ -162,10 +171,7 @@ app.post('/api/login', async (req, res) => {
       })
     }
 
-    const jwt = await new SignJWT(user)
-      .setProtectedHeader({alg: 'EdDSA'})
-      .setExpirationTime('30d')
-      .sign(privateKey)
+    const jwt = await generateLongToken(user)
 
     return res.cookie("refresh_token", jwt, {
       httpOnly: true,
@@ -205,10 +211,7 @@ app.post('/api/refresh', checkTokenMiddleware, async (req: RequestWithUser, res)
   })
 
 
-  const jwt = await new SignJWT(user)
-    .setProtectedHeader({alg: 'EdDSA'})
-    .setExpirationTime('30d')
-    .sign(privateKey)
+  const jwt = await generateLongToken(user)
 
   res.cookie("refresh_token", jwt, {
     httpOnly: true,
@@ -217,7 +220,7 @@ app.post('/api/refresh', checkTokenMiddleware, async (req: RequestWithUser, res)
   })
 })
 
-app.post("/api/claim", checkTokenMiddleware, async (req: RequestWithUser, res) => {
+app.get("/api/claim", checkTokenMiddleware, async (req: RequestWithUser, res) => {
   const user = req.user
   if(!user) {
     res.status(500).json({
@@ -239,10 +242,7 @@ app.post("/api/claim", checkTokenMiddleware, async (req: RequestWithUser, res) =
     }
   })
 
-  const jwt = await new SignJWT(user)
-    .setProtectedHeader({alg: 'EdDSA'})
-    .setExpirationTime('60s')
-    .sign(privateKey)
+  const jwt = await generateShortToken(user)
 
   res.json({
     success: true,
@@ -314,10 +314,7 @@ app.post("/api/oauth/discord", async (req, res) => {
     }
   })
 
-  const jwt = await new SignJWT(user)
-    .setProtectedHeader({alg: 'EdDSA'})
-    .setExpirationTime('30d')
-    .sign(privateKey)
+  const jwt = await generateLongToken(user)
 
   res.cookie("refresh_token", jwt, {
     httpOnly: true,
@@ -431,6 +428,24 @@ app.post("/api/oauth/discord/link", checkTokenMiddleware, async (req: RequestWit
 app.listen(3000, () => {
   console.log('Server is running');
 })
+
+const generateLongToken = async (user: User) => {
+  const jwt = await new SignJWT({...user, long: true})
+    .setProtectedHeader({alg: 'EdDSA'})
+    .setExpirationTime('30d')
+    .sign(privateKey)
+
+  return jwt
+}
+
+const generateShortToken = async (user: User) => {
+  const jwt = await new SignJWT(user)
+    .setProtectedHeader({alg: 'EdDSA'})
+    .setExpirationTime('60s')
+    .sign(privateKey)
+
+  return jwt
+}
 
 const getDiscordUserId = async (code: string, redirectUri: string) => {
   const clientId = process.env.DISCORD_CLIENT_ID as string

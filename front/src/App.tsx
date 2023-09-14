@@ -8,7 +8,7 @@ import {
   logout,
   refresh,
   discordLogin,
-  discordUnlink
+  discordUnlink, BasicResponse, claim
 } from "./api.ts";
 
 type LoginState = "notLoggedIn" | "loginRequested" | "loggedIn"
@@ -37,40 +37,65 @@ function App() {
     })
   }
 
+  const handleLoad = async (res: BasicResponse) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code')
+    const link = urlParams.get('link')
+    window.history.replaceState({}, document.title, "/");
+
+    if (res.success) {
+      setLoginState("loggedIn");
+      if (code) {
+        const discordLinkRes = await discordLink(code)
+        if (discordLinkRes.success) {
+          console.log(discordLinkRes.data)
+          location.reload()
+        } else {
+          alert(discordLinkRes.message)
+        }
+      } else if (link) {
+        // todo: handle link
+        const claimRes = await claim()
+        if (claimRes.success) {
+          const token = claimRes.token
+
+          const fetchRes = await fetch(link, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
+          })
+
+          console.log(await fetchRes.text())
+
+        } else {
+          alert(claimRes.message)
+        }
+      }
+    } else {
+      if(code) {
+        const discordLoginRes = await discordLogin(code)
+        if (discordLoginRes.success) {
+          console.log(discordLoginRes.data)
+          location.reload()
+        } else {
+          alert(discordLoginRes.message)
+        }
+      }
+
+      if(link) {
+        alert("ログインしていません。ログインしてからリクエストしてください。")
+      }
+    }
+    setLoaded(true)
+  }
+
 
   useEffect(() => {
     refresh().then(res => {
       // if query has code
-      const urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get('code')
-      window.history.replaceState({}, document.title, "/");
-      if (res.success) {
-        // ログインしている状態
-        setLoginState("loggedIn");
-        if (code) {
-          discordLink(code).then(res => {
-            if (res.success) {
-              console.log(res.data)
-              // めんどくさいのでリロード
-              location.reload()
-            }
-          })
-        }
-      } else {
-        if(code) {
-          discordLogin(code).then(res => {
-            if (res.success) {
-              console.log(res.data)
-              // めんどくさいのでリロード
-              location.reload()
-            } else {
-              alert(res.message)
-            }
-          })
-        }
-      }
-    }).finally(() => {
-      setLoaded(true)
+      handleLoad(res)
     })
   }, []);
 
@@ -115,7 +140,7 @@ function App() {
         <p>id: {userInfo?.id}</p>
         <p>createdAt: {(new Date(userInfo.createdAt)).toLocaleString()}</p>
         <p>NeosUserId: {userInfo?.neosUserId}</p>
-        <p>discordId: {userInfo?.discordId}</p>
+        <p>discordId: {userInfo?.discordId ?? "未連携"}</p>
 
         {userInfo?.discordId ? (<>
           <button onClick={
@@ -127,6 +152,7 @@ function App() {
                   location.reload()
                 } else {
                   alert(res.message)
+                  location.reload()
                 }
               })
             }

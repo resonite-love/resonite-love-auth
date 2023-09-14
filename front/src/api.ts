@@ -29,6 +29,11 @@ export const login = async (token: string) => {
 
 export type BasicResponse = {
   success: boolean
+  message: string
+}
+
+export interface ClaimResponse extends BasicResponse {
+  token: string
 }
 
 export const refresh = async () => {
@@ -41,6 +46,15 @@ export const refresh = async () => {
   })
 
   return await res.json() as BasicResponse
+}
+
+export const claim = async () => {
+  const res = await fetch("/api/claim", {
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  })
+  return await res.json() as ClaimResponse
 }
 
 export const logout = async () => {
