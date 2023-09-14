@@ -7,6 +7,15 @@ import fs from 'fs';
 import {Neos} from 'neos-client';
 import {createViteDevServer} from "./viteServer.mjs";
 
+type User = {
+  id: string,
+  createdAt: Date,
+  neosUserId: string | null,
+  discordId: string | null
+}
+
+interface RequestWithUser extends Request {user?: User}
+
 if (!process.env.NEOS_USERNAME || !process.env.NEOS_PASSWORD) {
   throw new Error('NEOS_USERNAME or NEOS_PASSWORD not set')
 }
@@ -44,7 +53,7 @@ if (process.env.NODE_ENV === "production") {
 const tokenMap = new Map<string, string>()
 
 
-const checkTokenMiddleware = async (req: Express.RequestWithUser, res: express.Response, next: express.NextFunction) => {
+const checkTokenMiddleware = async (req: RequestWithUser, res: express.Response, next: express.NextFunction) => {
   const refreshToken = req.cookies.refresh_token
 
 
@@ -210,6 +219,13 @@ app.post('/api/refresh', checkTokenMiddleware, async (req: RequestWithUser, res)
 
 app.post("/api/claim", checkTokenMiddleware, async (req: RequestWithUser, res) => {
   const user = req.user
+  if(!user) {
+    res.status(500).json({
+      success: false,
+      message: "ユーザーが見つかりません"
+    })
+    return
+  }
 
   await prisma.log.create({
     data: {
@@ -314,6 +330,13 @@ app.post("/api/oauth/discord", async (req, res) => {
 app.delete("/api/oauth/discord", checkTokenMiddleware, async (req: RequestWithUser, res) => {
 
   const user = req.user
+  if(!user) {
+    res.status(500).json({
+      success: false,
+      message: "ユーザーが見つかりません"
+    })
+    return
+  }
 
   await prisma.user.update({
     where: {
@@ -354,6 +377,13 @@ app.post("/api/oauth/discord/link", checkTokenMiddleware, async (req: RequestWit
   }
 
   const user = req.user
+  if(!user) {
+    res.status(500).json({
+      success: false,
+      message: "ユーザーが見つかりません"
+    })
+    return
+  }
 
   const id = await getDiscordUserId(code, redirectUri)
 
