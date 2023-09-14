@@ -1,4 +1,4 @@
-import express from 'express';
+import express, {Request} from 'express';
 import cookieParser from 'cookie-parser';
 import {PrismaClient} from '@prisma/client'
 import {SignJWT, jwtVerify, importPKCS8} from "jose"
@@ -6,7 +6,6 @@ import cors from 'cors';
 import fs from 'fs';
 import {Neos} from 'neos-client';
 import {createViteDevServer} from "./viteServer.mjs";
-import RequestWithUser = Express.RequestWithUser;
 
 if (!process.env.NEOS_USERNAME || !process.env.NEOS_PASSWORD) {
   throw new Error('NEOS_USERNAME or NEOS_PASSWORD not set')
@@ -45,8 +44,9 @@ if (process.env.NODE_ENV === "production") {
 const tokenMap = new Map<string, string>()
 
 
-const checkTokenMiddleware = async (req: RequestWithUser, res: express.Response, next: express.NextFunction) => {
+const checkTokenMiddleware = async (req: Express.RequestWithUser, res: express.Response, next: express.NextFunction) => {
   const refreshToken = req.cookies.refresh_token
+
 
   if (!refreshToken) {
     res.status(400).json({
