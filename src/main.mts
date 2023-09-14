@@ -24,8 +24,11 @@ if (!process.env.DISCORD_CLIENT_ID || !process.env.DISCORD_CLIENT_SECRET) {
   throw new Error('DISCORD_CLIENT_ID or DISCORD_CLIENT_SECRET not set')
 }
 
-const PRIVATE_KEY_PATH = './private.pem'
-const privateKey = await importPKCS8(fs.readFileSync(PRIVATE_KEY_PATH, 'utf-8'), "EdDSA")
+if (!process.env.PRIVATE_KEY || !process.env.PUBLIC_KEY) {
+  throw new Error('PRIVATE_KEY or PRIVATE_KEY not set')
+}
+
+const privateKey = await importPKCS8(process.env.PRIVATE_KEY, "EdDSA")
 
 const neos = new Neos({
   username: process.env.NEOS_USERNAME,
@@ -125,6 +128,14 @@ app.post('/api/loginRequest', async (req, res) => {
   res.json({
     success: true,
     message: "認証コードを入力してください"
+  })
+})
+
+app.get("/api/publickey", (_, res) => {
+  res.json({
+    success: true,
+    key: process.env.PUBLIC_KEY,
+    alg: "EdDSA"
   })
 })
 
