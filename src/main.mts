@@ -28,6 +28,8 @@ if (!process.env.PRIVATE_KEY || !process.env.PUBLIC_KEY) {
   throw new Error('PRIVATE_KEY or PRIVATE_KEY not set')
 }
 
+console.log(process.env.DATABASE_URL)
+
 const privateKey = await importPKCS8(process.env.PRIVATE_KEY, "EdDSA")
 
 const neos = new Neos({

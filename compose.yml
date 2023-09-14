@@ -16,3 +16,9 @@ services:
       retries: 20
     ports:
       - "127.0.0.1:15432:5432"
+  app:
+    restart: always
+    build: .
+    env_file: .env
+    ports:
+      - "4000:3000"
