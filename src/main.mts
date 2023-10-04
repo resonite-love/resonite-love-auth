@@ -3,21 +3,21 @@ import cookieParser from 'cookie-parser';
 import {PrismaClient} from '@prisma/client'
 import {SignJWT, jwtVerify, importPKCS8} from "jose"
 import cors from 'cors';
-import fs from 'fs';
-import {Neos} from 'neos-client';
+import {Resonite} from 'resonite-client-beta';
 import {createViteDevServer} from "./viteServer.mjs";
 
 type User = {
   id: string,
   createdAt: Date,
-  neosUserId: string | null,
+  resoniteUsername: string | null,
+  resoniteUserId: string | null,
   discordId: string | null
 }
 
 interface RequestWithUser extends Request {user?: User}
 
-if (!process.env.NEOS_USERNAME || !process.env.NEOS_PASSWORD) {
-  throw new Error('NEOS_USERNAME or NEOS_PASSWORD not set')
+if (!process.env.RESONITE_USERNAME || !process.env.RESONITE_PASSWORD) {
+  throw new Error('RESONITE_USERNAME or RESONITE_PASSWORD not set')
 }
 
 if (!process.env.DISCORD_CLIENT_ID || !process.env.DISCORD_CLIENT_SECRET) {
@@ -32,9 +32,10 @@ console.log(process.env.DATABASE_URL)
 
 const privateKey = await importPKCS8(process.env.PRIVATE_KEY, "EdDSA")
 
-const neos = new Neos({
-  username: process.env.NEOS_USERNAME,
-  password: process.env.NEOS_PASSWORD,
+const resonite = new Resonite()
+await resonite.login({
+  username: process.env.RESONITE_USERNAME,
+  password: process.env.RESONITE_PASSWORD,
 })
 const prisma = new PrismaClient()
 const app = express();
@@ -120,8 +121,8 @@ app.post('/api/loginRequest', async (req, res) => {
 
   tokenMap.set(token, userId)
 
-  // Neosに送る
-  neos.sendTextMessage({
+  // Resoniteに認証コードを送る
+  resonite.sendTextMessage({
     message: `認証コードは${token}です`,
     targetUserId: userId
   })
@@ -148,14 +149,14 @@ app.post('/api/login', async (req, res) => {
   if (userId) {
     let user = await prisma.user.findUnique({
       where: {
-        neosUserId: userId
+        resoniteUserId: userId
       }
     })
 
     if (!user) {
       user = await prisma.user.create({
         data: {
-          neosUserId: userId,
+          resoniteUserId: userId,
         }
       })
 
