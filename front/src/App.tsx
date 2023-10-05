@@ -42,6 +42,7 @@ function App() {
     const code = urlParams.get('code')
     const link = urlParams.get('link')
     window.history.replaceState({}, document.title, "/");
+    const beforeLink = localStorage.getItem("link")
 
     if (res.success) {
       setLoginState("loggedIn");
@@ -72,6 +73,26 @@ function App() {
         } else {
           alert(claimRes.message)
         }
+      } else if(beforeLink) {
+        localStorage.removeItem("link")
+
+        const claimRes = await claim()
+        if (claimRes.success) {
+          const token = claimRes.token
+
+          const fetchRes = await fetch(beforeLink, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
+          })
+
+          console.log(await fetchRes.text())
+
+        } else {
+          alert(claimRes.message)
+        }
       }
     } else {
       if(code) {
@@ -85,7 +106,8 @@ function App() {
       }
 
       if(link) {
-        alert("ログインしていません。ログインしてからリクエストしてください。")
+        alert("ログインしていないので、ログインして処理を続行してください。")
+        localStorage.setItem("link", link)
       }
     }
     setLoaded(true)
