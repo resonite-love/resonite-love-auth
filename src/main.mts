@@ -121,6 +121,8 @@ app.post('/api/loginRequest', async (req, res) => {
 
   tokenMap.set(token, userId)
 
+  await resonite.addContact({targetUserId: userId})
+
   // Resoniteに認証コードを送る
   resonite.sendTextMessage({
     message: `認証コードは${token}です`,
