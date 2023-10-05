@@ -127,7 +127,7 @@ function App() {
 
   if (loginState === "loginRequested") return (
     <>
-      <div>ログインリクエストをNeos経由で送信しました、ワンタイムパスワードを入力してください。</div>
+      <div>ログインリクエストをResonite経由で送信しました、ワンタイムパスワードを入力してください。</div>
       <input key={"token"} type="text" placeholder="OneTimePassword" id={"token"} ref={loginTokenRef}/>
       <button onClick={handleLogin}>ログイン</button>
     </>
@@ -139,7 +139,7 @@ function App() {
       {userInfo && (<>
         <p>id: {userInfo?.id}</p>
         <p>createdAt: {(new Date(userInfo.createdAt)).toLocaleString()}</p>
-        <p>NeosUserId: {userInfo?.neosUserId}</p>
+        <p>ResoniteUserId: {userInfo?.resoniteUserId}</p>
         <p>discordId: {userInfo?.discordId ?? "未連携"}</p>
 
         {userInfo?.discordId ? (<>
