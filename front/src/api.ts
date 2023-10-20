@@ -92,6 +92,9 @@ export const discordOAuth = async () => {
     window.location.href = result.url + window.location
   }
 }
+export const resoniteAuth = async () => {
+  alert("まだです　ごめんなさい")
+}
 
 export const discordLink = async (code: string) => {
   const res = await fetch("/api/oauth/discord/link", {

@@ -8,9 +8,9 @@ import {
     logout,
     refresh,
     discordLogin,
-    discordUnlink, BasicResponse, claim
+    discordUnlink, BasicResponse, claim, resoniteAuth
 } from "./api.ts";
-import {Box, Button, Container, CssBaseline, TextField, Typography} from "@mui/material";
+import {Box, Button, Chip, Container, CssBaseline, Divider, TextField, Typography} from "@mui/material";
 
 type LoginState = "notLoggedIn" | "loginRequested" | "loggedIn"
 
@@ -172,7 +172,18 @@ function App() {
                                 setUserId(e.target.value)
                             }
                         }/>
-                        <Button variant={"outlined"} onClick={handleLoginReq}>Resoniteでログイン</Button>
+                        <Button variant={"outlined"} onClick={handleLoginReq}
+                                sx={{
+                                    background: "linear-gradient(45deg, #f9f770 20%, #59eb5c 40%, #ff7676 60%, #ba64f2 80%, #61d1fa 100%)",
+                                    border: 0,
+                                    color: "white",
+                                }}
+                        >Resoniteでログイン・登録</Button>
+
+                        <Divider sx={{paddingTop: "1em", paddingBottom: "1em"}}>
+                            <Chip label="外部ログイン" />
+                        </Divider>
+                        <small>外部ログインはResoniteアカウントを作成した後に使えます</small>
                         <Button variant={"outlined"} sx={{
                             backgroundColor: "#7289DA",
                             color: "white",
@@ -183,6 +194,16 @@ function App() {
                                 onClick={() => {
                                     discordOAuth()
                                 }}>Discordでログイン</Button>
+                        <Button variant={"outlined"} sx={{
+                            backgroundColor: "#86b300",
+                            color: "white",
+                            "&:hover": {
+                                backgroundColor: "#"
+                            }
+                        }}
+                                onClick={() => {
+                                    resoniteAuth()
+                                }}>resonite.loveでログイン</Button>
 
                     </Box>
                 </Box>
