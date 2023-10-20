@@ -183,7 +183,7 @@ function App() {
                         <Divider sx={{paddingTop: "1em", paddingBottom: "1em"}}>
                             <Chip label="外部ログイン" />
                         </Divider>
-                        <small>外部ログインはResoniteアカウントを作成した後に使えます</small>
+                        <small>外部ログインはResoniteアカウントと連携した後に使えます</small>
                         <Button variant={"outlined"} sx={{
                             backgroundColor: "#7289DA",
                             color: "white",
