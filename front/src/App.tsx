@@ -198,7 +198,7 @@ function App() {
                             backgroundColor: "#86b300",
                             color: "white",
                             "&:hover": {
-                                backgroundColor: "#"
+                                backgroundColor: "#5b7600"
                             }
                         }}
                                 onClick={() => {
