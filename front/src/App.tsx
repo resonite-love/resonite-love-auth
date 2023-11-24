@@ -31,6 +31,13 @@ function App() {
         })
     }
 
+    const resendCode = () => {
+        if (!userId) return
+        loginRequest(userId).then(res => {
+            if (res.success) setLoginState("loginRequested")
+        })
+    }
+
     const handleLogin = () => {
         const loginToken = loginTokenRef.current?.value
         if (!loginToken) return
@@ -115,7 +122,7 @@ function App() {
             }
 
             if (link) {
-                alert("ログインしていないので、ログインして処理を続行してください。")
+                // alert("ログインしていないので、ログインして処理を続行してください。")
                 localStorage.setItem("link", link)
             }
         }
@@ -229,6 +236,7 @@ function App() {
                     <Box sx={{mt: 1, display: "flex", flexDirection: "column", width: "80%", gap: "10px"}}>
                         <TextField key={"token"} type="text" placeholder="OneTimePassword" id={"token"}
                                    inputRef={loginTokenRef}/>
+                        <Button variant={"outlined"} onClick={resendCode}>コードを再送信</Button>
                         <Button variant={"outlined"} onClick={handleLogin}>ログイン</Button>
                     </Box>
                 </Box>

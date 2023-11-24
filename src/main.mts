@@ -116,24 +116,63 @@ const checkTokenMiddleware = async (req: RequestWithUser, res: express.Response,
 // 未ログイン時 ログインリクエストを受けて認証コードを送る
 app.post('/api/loginRequest', async (req, res) => {
   const userId = req.body.userId
+
+
   // tokenを作る
-  const token = Math.floor(Math.random() * 1000000).toString().padStart(6, "0")
+  const token =  Math.floor(Math.random() * 1000000).toString().padStart(6, "0")
 
   tokenMap.set(token, userId)
 
   await resonite.addContact({targetUserId: userId})
 
   // Resoniteに認証コードを送る
-  resonite.sendTextMessage({
-    message: `認証コードは${token}です`,
-    targetUserId: userId
-  })
+    resonite.sendTextMessage({
+        message: `認証コードは${token}です`,
+        targetUserId: userId
+    })
+
+    resonite.sendTextMessage({
+        message: `${token}`,
+        targetUserId: userId
+    })
 
   // フロントにリクエストの成功を返す
   res.json({
     success: true,
     message: "認証コードを入力してください"
   })
+})
+
+app.post("/api/loginRequest/resend",async (req, res) => {
+    const userId = req.body.userId
+    // tokenを作る
+    const token = tokenMap.get(userId)
+    if(!token) {
+        res.json({
+            success: false,
+            message: "認証コードが見つかりません"
+        })
+        return
+    }
+
+    await resonite.addContact({targetUserId: userId})
+
+    // Resoniteに認証コードを送る
+    resonite.sendTextMessage({
+        message: `認証コードは${token}です`,
+        targetUserId: userId
+    })
+
+    resonite.sendTextMessage({
+        message: `${token}`,
+        targetUserId: userId
+    })
+
+    // フロントにリクエストの成功を返す
+    res.json({
+        success: true,
+        message: "認証コードを入力してください"
+    })
 })
 
 app.get("/api/publickey", (_, res) => {
