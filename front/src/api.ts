@@ -1,13 +1,13 @@
 
 
 
-export const loginRequest = async (userId: string) => {
+export const loginRequest = async (userId: string, lang: string) => {
   const res = await fetch("/api/loginRequest", {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({userId: userId})
+    body: JSON.stringify({userId: userId, lang})
   })
 
   const result = await res.json()

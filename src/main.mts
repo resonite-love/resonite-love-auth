@@ -65,7 +65,7 @@ const checkTokenMiddleware = async (req: RequestWithUser, res: express.Response,
   if (!refreshToken) {
     res.status(400).json({
       success: false,
-      message: "リフレッシュトークンがありません"
+      message: "リフレッシュトークンがありません No refresh token"
     })
     return
   }
@@ -82,7 +82,7 @@ const checkTokenMiddleware = async (req: RequestWithUser, res: express.Response,
     if (!long) {
       res.status(400).json({
         success: false,
-        message: "リフレッシュトークンではありません"
+        message: "リフレッシュトークンではありません Invalid token"
       })
       return
     }
@@ -96,7 +96,7 @@ const checkTokenMiddleware = async (req: RequestWithUser, res: express.Response,
     if (!user) {
       res.status(400).json({
         success: false,
-        message: "ユーザーが見つかりません"
+        message: "ユーザーが見つかりません User not found"
       })
       return
     }
@@ -116,6 +116,7 @@ const checkTokenMiddleware = async (req: RequestWithUser, res: express.Response,
 // 未ログイン時 ログインリクエストを受けて認証コードを送る
 app.post('/api/loginRequest', async (req, res) => {
   const userId = req.body.userId
+    const lang = req.body.lang
 
 
   // tokenを作る
@@ -125,9 +126,19 @@ app.post('/api/loginRequest', async (req, res) => {
 
   await resonite.addContact({targetUserId: userId})
 
+    let message = `認証コードは${token}です`
+    switch (lang) {
+        case "en":
+            message = `Your authentication code is ${token}`
+            break
+        case "ko":
+            message = `인증 코드는 ${token}입니다`
+            break
+    }
+
   // Resoniteに認証コードを送る
     resonite.sendTextMessage({
-        message: `認証コードは${token}です`,
+        message: message,
         targetUserId: userId
     })
 
@@ -139,40 +150,8 @@ app.post('/api/loginRequest', async (req, res) => {
   // フロントにリクエストの成功を返す
   res.json({
     success: true,
-    message: "認証コードを入力してください"
+    message: "認証コードを入力してください Please enter the authentication code"
   })
-})
-
-app.post("/api/loginRequest/resend",async (req, res) => {
-    const userId = req.body.userId
-    // tokenを作る
-    const token = tokenMap.get(userId)
-    if(!token) {
-        res.json({
-            success: false,
-            message: "認証コードが見つかりません"
-        })
-        return
-    }
-
-    await resonite.addContact({targetUserId: userId})
-
-    // Resoniteに認証コードを送る
-    resonite.sendTextMessage({
-        message: `認証コードは${token}です`,
-        targetUserId: userId
-    })
-
-    resonite.sendTextMessage({
-        message: `${token}`,
-        targetUserId: userId
-    })
-
-    // フロントにリクエストの成功を返す
-    res.json({
-        success: true,
-        message: "認証コードを入力してください"
-    })
 })
 
 app.get("/api/publickey", (_, res) => {
@@ -236,7 +215,7 @@ app.post('/api/login', async (req, res) => {
   } else {
     return res.json({
       success: false,
-      message: "認証コードが間違っています"
+      message: "認証コードが間違っています Invalid token"
     })
   }
 })
@@ -248,7 +227,7 @@ app.post('/api/refresh', checkTokenMiddleware, async (req: RequestWithUser, res)
   if (!user) {
     res.status(400).json({
       success: false,
-      message: "ユーザーが見つかりません"
+      message: "ユーザーが見つかりません User not found"
     })
     return
   }
@@ -534,5 +513,7 @@ const getDiscordUserId = async (code: string, redirectUri: string) => {
 
 // catch unhandledRejection
 process.on('unhandledRejection', (err) => {
-  console.error(err)
+  // restart
+    console.error(err)
+    process.exit(1)
 })
