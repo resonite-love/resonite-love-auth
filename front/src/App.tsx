@@ -17,7 +17,7 @@ import {
     Chip,
     Container,
     CssBaseline,
-    Divider, FormControl, InputLabel, MenuItem, Paper, Select,
+    Divider, FormControl, InputLabel, MenuItem, Paper, Select, Stack,
     TextField,
     Toolbar,
     Typography
@@ -224,37 +224,36 @@ function App() {
     }, [lang]);
 
 
-
-
     if (!loaded) return (<div>loading...</div>)
 
     if (loginState === "notLoggedIn") return (
-        <>
+        <div style={{height: "100vh", backgroundSize: "cover", backgroundColor: "rgba(0,0,0,0.7)"}}>
+            <video autoPlay muted loop style={{
+                position: "fixed",
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                transform: "translate(-50%, -50%)",
+                zIndex: -1,
+                left: "50%",
+                top: "50%"
+            }}>
+                <source src={"/bg.webm"} type="video/webm"/>
+            </video>
             <AppBar position="static" color={"inherit"} elevation={1}>
                 <Toolbar variant="dense">
-                    <Typography variant="h6" color="inherit" component="div" sx={{ flexGrow: 1 }}>
+                    <Typography variant="h6" color="inherit" component="div" sx={{flexGrow: 1}}>
                         Resonite.Love
                     </Typography>
-                    <FormControl sx={{width: 200}} size={"small"}>
-                        <InputLabel id="demo-simple-select-label">Language</InputLabel>
-                        <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            label="Language"
-                            value={lang}
-                            onChange={(e) => {
-                                setLang(e.target.value as "ja" | "en" | "ko")
-                            }}
-                        >
-                            <MenuItem value={"ja"}>Japanese</MenuItem>
-                            <MenuItem value={"en"}>English</MenuItem>
-                            <MenuItem value={"ko"}>Korean</MenuItem>
-                        </Select>
-                    </FormControl>
+                    <Stack direction="row" spacing={0.3}>
+                        <Chip onClick={() => setLang("ja")} label={"JA"} clickable color={lang === "ja" ? "primary" : "default"} />
+                        <Chip onClick={() => setLang("en")} label={"EN"} clickable color={lang === "en" ? "primary" : "default"} />
+                        <Chip onClick={() => setLang("ko")} label={"KO"} clickable color={lang === "ko" ? "primary" : "default"} />
+                    </Stack>
                 </Toolbar>
             </AppBar>
             <Container component='main' maxWidth='xs'>
-                <Paper sx={{padding: "40px 20px", marginTop: "60px"}}>
+                <Paper sx={{padding: "40px 20px", marginTop: "60px", backgroundColor: "rgba(255,255,255,0.8)"}}>
                     <CssBaseline/>
                     <Box
                         sx={{
@@ -278,13 +277,16 @@ function App() {
                             <Button variant={"outlined"} onClick={handleLoginReq}
                                     sx={{
                                         background: "linear-gradient(45deg, #f9f770 20%, #59eb5c 40%, #ff7676 60%, #ba64f2 80%, #61d1fa 100%)",
-                                        border: 0,
                                         color: "white",
+                                        border: 0,
+                                        "&:hover": {
+                                            border: 0
+                                        }
                                     }}
                             >{t.loginViaResonite}</Button>
 
                             <Divider sx={{paddingTop: "1em", paddingBottom: "1em"}}>
-                                <Chip label={t.externalLoginLabel} />
+                                <Chip label={t.externalLoginLabel}/>
                             </Divider>
                             <small>{t.externalLoginDesc}</small>
                             <Button variant={"outlined"} sx={{
@@ -312,32 +314,21 @@ function App() {
                     </Box>
                 </Paper>
             </Container>
-        </>
+        </div>
     )
 
     if (loginState === "loginRequested") return (
         <>
             <AppBar position="static" color={"inherit"} elevation={1}>
                 <Toolbar variant="dense">
-                    <Typography variant="h6" color="inherit" component="div" sx={{ flexGrow: 1 }}>
+                    <Typography variant="h6" color="inherit" component="div" sx={{flexGrow: 1}}>
                         Resonite.Love
                     </Typography>
-                    <FormControl sx={{width: 200}} size={"small"}>
-                        <InputLabel id="demo-simple-select-label">Language</InputLabel>
-                        <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            label="Language"
-                            value={lang}
-                            onChange={(e) => {
-                                setLang(e.target.value as "ja" | "en" | "ko")
-                            }}
-                        >
-                            <MenuItem value={"ja"}>Japanese</MenuItem>
-                            <MenuItem value={"en"}>English</MenuItem>
-                            <MenuItem value={"ko"}>Korean</MenuItem>
-                        </Select>
-                    </FormControl>
+                    <Stack direction="row" spacing={0.3}>
+                        <Chip onClick={() => setLang("ja")} label={"JA"} clickable color={lang === "ja" ? "primary" : "default"} />
+                        <Chip onClick={() => setLang("en")} label={"EN"} clickable color={lang === "en" ? "primary" : "default"} />
+                        <Chip onClick={() => setLang("ko")} label={"KO"} clickable color={lang === "ko" ? "primary" : "default"} />
+                    </Stack>
                 </Toolbar>
             </AppBar>
             <Container component='main' maxWidth='xs'>
@@ -368,25 +359,14 @@ function App() {
         <>
             <AppBar position="static" color={"inherit"} elevation={1}>
                 <Toolbar variant="dense">
-                    <Typography variant="h6" color="inherit" component="div" sx={{ flexGrow: 1 }}>
+                    <Typography variant="h6" color="inherit" component="div" sx={{flexGrow: 1}}>
                         Resonite.Love
                     </Typography>
-                    <FormControl sx={{width: 200}} size={"small"}>
-                        <InputLabel id="demo-simple-select-label">Language</InputLabel>
-                        <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            label="Language"
-                            value={lang}
-                            onChange={(e) => {
-                                setLang(e.target.value as "ja" | "en" | "ko")
-                            }}
-                        >
-                            <MenuItem value={"ja"}>Japanese</MenuItem>
-                            <MenuItem value={"en"}>English</MenuItem>
-                            <MenuItem value={"ko"}>Korean</MenuItem>
-                        </Select>
-                    </FormControl>
+                    <Stack direction="row" spacing={0.3}>
+                        <Chip onClick={() => setLang("ja")} label={"JA"} clickable color={lang === "ja" ? "primary" : "default"} />
+                        <Chip onClick={() => setLang("en")} label={"EN"} clickable color={lang === "en" ? "primary" : "default"} />
+                        <Chip onClick={() => setLang("ko")} label={"KO"} clickable color={lang === "ko" ? "primary" : "default"} />
+                    </Stack>
                 </Toolbar>
             </AppBar>
             <Container component='main' maxWidth='xs'>
