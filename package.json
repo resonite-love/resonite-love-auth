@@ -6,8 +6,10 @@
   "scripts": {
     "start": "node --env-file=.env ./build/main.mjs",
     "build": "tsc",
-    "build:front": "vite build ./front"
+    "build:front": "vite build ./front",
+    "eslint": "eslint --ext .ts,.tsx ./src --fix"
   },
+  "eslintConfig": ".eslintrc.js",
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -32,8 +34,8 @@
     "@types/node": "^20.6.0",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
     "@vitejs/plugin-react": "^4.0.3",
     "cors": "^2.8.5",
     "eslint": "^8.45.0",
