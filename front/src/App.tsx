@@ -91,7 +91,7 @@ function App() {
                                     loginReq(userIdRef.current?.value ?? "")
                                 }}
                                         sx={{
-                                            background: "linear-gradient(45deg, #f9f770 20%, #59eb5c 40%, #ff7676 60%, #ba64f2 80%, #61d1fa 100%)",
+                                            background: "linear-gradient(45deg, #d3d15f 20%, #4bc74e 40%, #d86464 60%, #9e55cd 80%, #52b1d4 100%)",
                                             color: "white",
                                             border: 0,
                                             "&:hover": {

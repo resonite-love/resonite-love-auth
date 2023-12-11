@@ -1,6 +1,7 @@
 import {createContext, ReactNode, useContext, useEffect, useMemo, useState} from "react";
 import {BasicResponse, claim, discordLink, discordLogin, getUserInfo, login as apiLogin, loginRequest, refresh} from "../api.ts";
 import {useTranslation} from "./Translation.tsx";
+import {Language} from "../components/LanguageButton.tsx";
 
 export type LoginState = "notLoggedIn" | "loginRequested" | "loggedIn"
 
@@ -33,7 +34,7 @@ export const AppStateProvider = ({children}: IAppProps) => {
     const [username, setUsername] = useState("")
     const [loaded, setLoaded] = useState(false)
 
-    const {language} = useTranslation()
+    const {language, setLanguage} = useTranslation()
 
 
     useEffect(() => {
@@ -56,6 +57,12 @@ export const AppStateProvider = ({children}: IAppProps) => {
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code')
         const link = urlParams.get('link')
+        const lang = urlParams.get('lang')
+        if (lang) {
+            // set lang 2 chars
+            const langStr = lang.substring(0, 2)
+            setLanguage(language as Language)
+        }
 
         if (urlParams.get("userId")) {
             setUserId(urlParams.get("userId") ?? "")
