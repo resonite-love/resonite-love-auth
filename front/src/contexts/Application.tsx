@@ -161,7 +161,12 @@ export const AppStateProvider = ({children}: IAppProps) => {
     const login = (loginToken: string) => {
         setLoginState("loggedIn")
         apiLogin(loginToken).then(res => {
-            if (res.success) setLoginState("loggedIn")
+            if (res.success) {
+                setLoginState("loggedIn")
+                const beforeLink = localStorage.getItem("link")
+                console.log("beforeLink", beforeLink)
+                location.reload()
+            }
         })
     }
 
