@@ -61,7 +61,7 @@ export const AppStateProvider = ({children}: IAppProps) => {
         if (lang) {
             // set lang 2 chars
             const langStr = lang.substring(0, 2)
-            setLanguage(language as Language)
+            setLanguage(langStr as Language)
         }
 
         if (urlParams.get("userId")) {
