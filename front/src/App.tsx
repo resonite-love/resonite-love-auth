@@ -10,7 +10,6 @@ import {
     loginRequest,
     logout,
     refresh,
-    resoniteAuth,
     claimMisskeyLink, unlinkMisskey
 } from "./api.ts";
 import {
