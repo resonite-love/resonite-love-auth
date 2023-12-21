@@ -92,9 +92,6 @@ export const discordOAuth = async () => {
     window.location.href = result.url + window.location
   }
 }
-export const resoniteAuth = async () => {
-  alert("まだです　ごめんなさい")
-}
 
 export const discordLink = async (code: string) => {
   const res = await fetch("/api/oauth/discord/link", {
@@ -132,4 +129,53 @@ export const discordLogin = async (code: string) => {
 
   const result = await res.json()
   return result
+}
+
+export const claimMisskeyLink = async () => {
+    const res = await fetch("/api/oauth/misskey/claimAuthLink", {
+        headers: {
+        'Content-Type': 'application/json'
+        },
+    })
+
+    const result = await res.json()
+    return result
+}
+
+export const linkMisskey = async (code: string) => {
+    const res = await fetch("/api/oauth/misskey/link", {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({code: code})
+    })
+
+    const result = await res.json()
+    return result
+}
+
+export const unlinkMisskey = async () => {
+    const res = await fetch("/api/oauth/misskey", {
+        method: 'DELETE',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+    })
+
+    const result = await res.json()
+    return result
+}
+
+export const loginWithMisskey = async (code: string) => {
+    const res = await fetch("/api/oauth/misskey", {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({code: code})
+    })
+
+    const result = await res.json()
+    return result
 }

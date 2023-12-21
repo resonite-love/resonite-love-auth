@@ -17,6 +17,7 @@ model User {
   resoniteUserId   String?  @unique
   resoniteUsername String?  @unique
   discordId        String?  @unique
+  misskeyId        String?  @unique
   logs             Log[]
 }
 

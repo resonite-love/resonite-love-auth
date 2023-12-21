@@ -36,6 +36,8 @@ export const TranslationProvider = ({children}: ITranslationProps) => {
                     logout: "ログアウト",
                     linkDiscord: "Discord連携",
                     unlinkDiscord: "Discord連携を解除",
+                    linkMisskey: "misskey.resonite.love連携",
+                    unlinkMisskey: "misskey.resonite.love連携を解除",
 
                 })
                 break
@@ -53,6 +55,8 @@ export const TranslationProvider = ({children}: ITranslationProps) => {
                     logout: "Logout",
                     linkDiscord: "Link Discord",
                     unlinkDiscord: "Unlink Discord",
+                    linkMisskey: "Link misskey.resonite.love",
+                    unlinkMisskey: "Unlink misskey.resonite.love",
                 })
                 break
             case "ko":
@@ -69,6 +73,8 @@ export const TranslationProvider = ({children}: ITranslationProps) => {
                     logout: "로그아웃",
                     linkDiscord: "Discord 연결",
                     unlinkDiscord: "Discord 연결 해제",
+                    linkMisskey: "misskey.resonite.love 연결",
+                    unlinkMisskey: "misskey.resonite.love 연결 해제",
                 })
                 break
         }

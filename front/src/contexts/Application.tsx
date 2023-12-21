@@ -1,5 +1,15 @@
 import {createContext, ReactNode, useContext, useEffect, useMemo, useState} from "react";
-import {BasicResponse, claim, discordLink, discordLogin, getUserInfo, login as apiLogin, loginRequest, refresh} from "../api.ts";
+import {
+    BasicResponse,
+    claim,
+    discordLink,
+    discordLogin,
+    getUserInfo,
+    linkMisskey,
+    login as apiLogin,
+    loginRequest, loginWithMisskey,
+    refresh
+} from "../api.ts";
 import {useTranslation} from "./Translation.tsx";
 import {Language} from "../components/LanguageButton.tsx";
 
@@ -55,7 +65,9 @@ export const AppStateProvider = ({children}: IAppProps) => {
 
     const handleLoad = async (res: BasicResponse) => {
         const urlParams = new URLSearchParams(window.location.search);
+        console.log(urlParams)
         const code = urlParams.get('code')
+        const iss = urlParams.get('iss')
         const link = urlParams.get('link')
         const lang = urlParams.get('lang')
         if (lang) {
@@ -77,6 +89,17 @@ export const AppStateProvider = ({children}: IAppProps) => {
         if (res.success) {
             setLoginState("loggedIn");
             if (code) {
+                if(iss?.includes("misskey")) {
+                    linkMisskey(code).then(res => {
+                        if(res.success) {
+                            location.reload()
+                        } else {
+                            alert(res.message)
+                        }
+
+                    })
+                    return
+                }
                 const discordLinkRes = await discordLink(code)
                 if (discordLinkRes.success) {
                     console.log(discordLinkRes.data)
@@ -126,6 +149,17 @@ export const AppStateProvider = ({children}: IAppProps) => {
             }
         } else {
             if (code) {
+                if(iss?.includes("misskey")) {
+                    loginWithMisskey(code).then(res => {
+                        if(res.success) {
+                            location.reload()
+                        } else {
+                            alert(res.message)
+                        }
+
+                    })
+                    return
+                }
                 const discordLoginRes = await discordLogin(code)
                 if (discordLoginRes.success) {
                     console.log(discordLoginRes.data)

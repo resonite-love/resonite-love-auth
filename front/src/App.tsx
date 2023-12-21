@@ -10,7 +10,8 @@ import {
     loginRequest,
     logout,
     refresh,
-    resoniteAuth
+    resoniteAuth,
+    claimMisskeyLink, unlinkMisskey
 } from "./api.ts";
 import {
     Box,
@@ -123,7 +124,12 @@ function App() {
                                     }
                                 }}
                                         onClick={() => {
-                                            resoniteAuth()
+                                            claimMisskeyLink().then(res => {
+                                                if (res.success) {
+                                                    location.href = res.url
+
+                                                }
+                                            })
                                         }}>{t.loginViaResoniteLove}</Button>
 
                             </Box>
@@ -163,6 +169,7 @@ function App() {
     return (
         <>
             <Header/>
+            <CssBaseline/>
             <Container component='main' maxWidth='xs'>
                 <Typography component='h1' variant='h5'>
                     {t.loggedIn}
@@ -170,6 +177,7 @@ function App() {
                 {userInfo && (<>
                     <p>ResoniteUserId: {userInfo?.resoniteUserId}</p>
                     <p>discordId: {userInfo?.discordId ?? "not connected"}</p>
+                    <p>misskeyId: {userInfo?.misskeyId ?? "not connected"}</p>
 
                     {userInfo?.discordId ? (<>
                         <Button variant={"outlined"} onClick={
@@ -194,6 +202,27 @@ function App() {
                         </Button>
                     </>)}
 
+                </>)}
+                {userInfo?.misskeyId ? (<>
+                    <Button variant={"outlined"} onClick={() => {
+                        unlinkMisskey().then(res => {
+                            if (res.success) {
+                                location.reload()
+                            }
+                        })
+                    }}>
+                        {t.unlinkMisskey}
+                    </Button>
+                </>) : (<>
+                    <Button variant={"outlined"} onClick={() => {
+                        claimMisskeyLink().then(res => {
+                            if (res.success) {
+                                location.href = res.url
+                            }
+                        })
+                    }}>
+                        {t.linkMisskey}
+                    </Button>
                 </>)}
                 <Button variant={"outlined"} onClick={() => {
                     logout().then(res => {
