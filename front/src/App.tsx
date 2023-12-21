@@ -87,7 +87,7 @@ function App() {
                                 <TextField key={"username"} type="text" label="username" id={"username"} disabled={true}
                                            value={username}/>
                                 <TextField key={"userId"} type="text" label="UserId" id={"userId"}
-                                           inputRef={userIdRef} value={userId}/>
+                                           inputRef={userIdRef} defaultValue={userId}/>
                                 <Button variant={"outlined"} onClick={() => {
                                     loginReq(userIdRef.current?.value ?? "")
                                 }}
