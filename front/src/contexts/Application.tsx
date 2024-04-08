@@ -69,6 +69,7 @@ export const AppStateProvider = ({children}: IAppProps) => {
         const code = urlParams.get('code')
         const iss = urlParams.get('iss')
         const link = urlParams.get('link')
+        const linkType = urlParams.get('linkType')
         const lang = urlParams.get('lang')
         if (lang) {
             // set lang 2 chars
@@ -85,6 +86,7 @@ export const AppStateProvider = ({children}: IAppProps) => {
 
         window.history.replaceState({}, document.title, "/");
         const beforeLink = localStorage.getItem("link")
+        const beforeLinkType = localStorage.getItem("linkType")
 
         if (res.success) {
             setLoginState("loggedIn");
@@ -108,40 +110,73 @@ export const AppStateProvider = ({children}: IAppProps) => {
                     alert(discordLinkRes.message)
                 }
             } else if (link) {
+                // ログインした状態でリンクを処理
                 // todo: handle link
                 const claimRes = await claim()
+
                 if (claimRes.success) {
                     const token = claimRes.token
 
-                    const fetchRes = await fetch(link, {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${token}`
-                        }
-                    })
+                    switch (linkType) {
+                        case "GET":
+                            await fetch(link, {
+                                method: "GET",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "Authorization": `Bearer ${token}`
+                                }
+                            })
+                            break
+                        case "POST":
+                            await fetch(link, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "Authorization": `Bearer ${token}`
+                                }
+                            })
+                            break
+                        case "REDIRECT":
+                            window.location.href = `${link}?RLToken=${token}`
+                            break
+                    }
 
-                    console.log(await fetchRes.text())
 
                 } else {
                     alert(claimRes.message)
                 }
             } else if (beforeLink) {
+                // ログインした(いま)状態で、前回のリンクを処理
                 localStorage.removeItem("link")
+                localStorage.removeItem("linkType")
 
                 const claimRes = await claim()
                 if (claimRes.success) {
                     const token = claimRes.token
 
-                    const fetchRes = await fetch(beforeLink, {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${token}`
-                        }
-                    })
-
-                    console.log(await fetchRes.text())
+                    switch (beforeLinkType) {
+                        case "GET":
+                            await fetch(beforeLink, {
+                                method: "GET",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "Authorization": `Bearer ${token}`
+                                }
+                            })
+                            break
+                        case "POST":
+                            await fetch(beforeLink, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "Authorization": `Bearer ${token}`
+                                }
+                            })
+                            break
+                        case "REDIRECT":
+                            window.location.href = `${beforeLink}?RLToken=${token}`
+                            break
+                    }
 
                 } else {
                     alert(claimRes.message)
@@ -172,6 +207,7 @@ export const AppStateProvider = ({children}: IAppProps) => {
             if (link) {
                 // alert("ログインしていないので、ログインして処理を続行してください。")
                 localStorage.setItem("link", link)
+                localStorage.setItem("linkType", linkType ?? "GET")
             }
         }
         setLoaded(true)
