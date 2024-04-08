@@ -112,7 +112,7 @@ export const AppStateProvider = ({children}: IAppProps) => {
             } else if (link) {
                 // ログインした状態でリンクを処理
                 // todo: handle link
-                const claimRes = await claim()
+                const claimRes = await claim(link)
 
                 if (claimRes.success) {
                     const token = claimRes.token
@@ -150,7 +150,7 @@ export const AppStateProvider = ({children}: IAppProps) => {
                 localStorage.removeItem("link")
                 localStorage.removeItem("linkType")
 
-                const claimRes = await claim()
+                const claimRes = await claim(beforeLink)
                 if (claimRes.success) {
                     const token = claimRes.token
 

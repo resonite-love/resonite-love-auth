@@ -48,8 +48,10 @@ export const refresh = async () => {
   return await res.json() as BasicResponse
 }
 
-export const claim = async () => {
-  const res = await fetch("/api/claim", {
+export const claim = async (link?: string) => {
+    const url = link ? `/api/claim?link=${link}` : "/api/claim"
+
+  const res = await fetch(url, {
     headers: {
       'Content-Type': 'application/json'
     },

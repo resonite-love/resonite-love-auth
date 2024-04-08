@@ -284,6 +284,8 @@ app.post('/api/refresh', checkTokenMiddleware, async (req: RequestWithUser, res)
 
 app.get("/api/claim", checkTokenMiddleware, async (req: RequestWithUser, res) => {
     const user = req.user
+    const link = req.query.link as string
+
     if (!user) {
         res.status(500).json({
             success: false,
@@ -304,7 +306,7 @@ app.get("/api/claim", checkTokenMiddleware, async (req: RequestWithUser, res) =>
         }
     })
 
-    const jwt = await generateShortToken(user)
+    const jwt = await generateShortToken(user, link)
 
     res.json({
         success: true,
@@ -692,9 +694,10 @@ const generateLongToken = async (user: User) => {
     return jwt
 }
 
-const generateShortToken = async (user: User) => {
+const generateShortToken = async (user: User, link: string = "NO_CONTAIN_LINK") => {
     const jwt = await new SignJWT(user)
         .setProtectedHeader({alg: 'EdDSA'})
+        .setAudience(link)
         .setExpirationTime('60s')
         .sign(privateKey)
 
