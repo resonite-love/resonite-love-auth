@@ -1,7 +1,7 @@
 import express, {Request} from 'express';
 import cookieParser from 'cookie-parser';
 import {PrismaClient} from '@prisma/client'
-import {SignJWT, jwtVerify, importPKCS8} from "jose"
+import {importPKCS8, jwtVerify, SignJWT} from "jose"
 import cors from 'cors';
 import {Resonite} from 'resonite-client-beta';
 import {createViteDevServer} from "./viteServer.mjs";
@@ -695,13 +695,17 @@ const generateLongToken = async (user: User) => {
 }
 
 const generateShortToken = async (user: User, link: string = "NO_CONTAIN_LINK") => {
-    const jwt = await new SignJWT(user)
+    // linkからドメインを取得
+    let aud = new URL(link).origin
+    if(!aud) {
+       aud = "NO_CONTAIN_LINK"
+    }
+
+    return await new SignJWT(user)
         .setProtectedHeader({alg: 'EdDSA'})
-        .setAudience(link)
+        .setAudience(aud)
         .setExpirationTime('60s')
         .sign(privateKey)
-
-    return jwt
 }
 
 const getDiscordUserId = async (code: string, redirectUri: string) => {
