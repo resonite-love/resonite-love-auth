@@ -165,12 +165,12 @@ app.post('/api/loginRequest', async (req, res) => {
     }
 
     // Resoniteに認証コードを送る
-    resonite.sendTextMessage({
+    await resonite.sendTextMessage({
         message: message,
         targetUserId: userId
     })
 
-    resonite.sendTextMessage({
+    await resonite.sendTextMessage({
         message: `${token}`,
         targetUserId: userId
     })
@@ -330,7 +330,7 @@ app.get("/api/user", checkTokenMiddleware, async (req: RequestWithUser, res) => 
     })
 })
 
-app.get("/api/oauth/discord", async (req, res) => {
+app.get("/api/oauth/discord", async (_, res) => {
     const url = `https://discord.com/api/oauth2/authorize?client_id=${process.env.DISCORD_CLIENT_ID}&response_type=code&scope=identify&redirect_uri=`
 
     return res.json({
@@ -527,7 +527,7 @@ app.delete("/api/oauth/misskey", checkTokenMiddleware, async (req: RequestWithUs
     return
 })
 
-app.get("/api/oauth/misskey/claimAuthLink", async (req: RequestWithUser, res) => {
+app.get("/api/oauth/misskey/claimAuthLink", async (_: RequestWithUser, res) => {
 
     const codeChallengeMethod = "S256"
     const codeChallenge = base64uri(await crypto.subtle.digest("sha-256", new TextEncoder().encode(codeVerifier)))
