@@ -91,9 +91,9 @@ export const AppStateProvider = ({children}: IAppProps) => {
         if (res.success) {
             setLoginState("loggedIn");
             if (code) {
-                if(iss?.includes("misskey")) {
+                if (iss?.includes("misskey")) {
                     linkMisskey(code).then(res => {
-                        if(res.success) {
+                        if (res.success) {
                             location.reload()
                         } else {
                             alert(res.message)
@@ -139,6 +139,15 @@ export const AppStateProvider = ({children}: IAppProps) => {
                         case "REDIRECT":
                             window.location.href = `${link}?RLToken=${token}`
                             break
+                        default:
+                            await fetch(link, {
+                                method: "GET",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "Authorization": `Bearer ${token}`
+                                }
+                            })
+                            break
                     }
 
 
@@ -176,6 +185,15 @@ export const AppStateProvider = ({children}: IAppProps) => {
                         case "REDIRECT":
                             window.location.href = `${beforeLink}?RLToken=${token}`
                             break
+                        default:
+                            await fetch(beforeLink, {
+                                method: "GET",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "Authorization": `Bearer ${token}`
+                                }
+                            })
+                            break
                     }
 
                 } else {
@@ -184,9 +202,9 @@ export const AppStateProvider = ({children}: IAppProps) => {
             }
         } else {
             if (code) {
-                if(iss?.includes("misskey")) {
+                if (iss?.includes("misskey")) {
                     loginWithMisskey(code).then(res => {
-                        if(res.success) {
+                        if (res.success) {
                             location.reload()
                         } else {
                             alert(res.message)

@@ -698,7 +698,7 @@ const generateShortToken = async (user: User, link: string = "NO_CONTAIN_LINK") 
     // linkからドメインを取得
     let aud = new URL(link).origin
     if(!aud) {
-       aud = "NO_CONTAIN_LINK"
+        aud = "NO_CONTAIN_LINK"
     }
 
     return await new SignJWT(user)
