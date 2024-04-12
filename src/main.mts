@@ -71,7 +71,7 @@ app.use(express.json());
 app.use(cookieParser())
 app.use(express.urlencoded({extended: true}));
 app.use(cors({
-    origin: 'https://v2.neauth.app/',
+    origin: 'https://auth.resonite.love/',
 }))
 
 if (process.env.NODE_ENV === "production") {
