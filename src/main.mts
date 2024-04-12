@@ -70,9 +70,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser())
 app.use(express.urlencoded({extended: true}));
-app.use(cors({
-    origin: 'https://auth.resonite.love/',
-}))
+app.use(cors())
 
 if (process.env.NODE_ENV === "production") {
     app.use(express.static('front/dist'))
