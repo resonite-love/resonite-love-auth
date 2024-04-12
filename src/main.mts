@@ -330,6 +330,26 @@ app.get("/api/user", checkTokenMiddleware, async (req: RequestWithUser, res) => 
     })
 })
 
+app.get("/api/user/search", async (req, res) => {
+  const misskeyId = req.query.misskeyId as string
+  const user = await prisma.user.findUnique({
+    where: {
+      misskeyId: misskeyId
+    }
+  })
+    if(!user) {
+        res.json({
+            success: false,
+            message: "ユーザーが見つかりません"
+        })
+        return
+    }
+    return res.json({
+        success: true,
+        data: user
+    })
+})
+
 app.get("/api/oauth/discord", async (_, res) => {
     const url = `https://discord.com/api/oauth2/authorize?client_id=${process.env.DISCORD_CLIENT_ID}&response_type=code&scope=identify&redirect_uri=`
 
