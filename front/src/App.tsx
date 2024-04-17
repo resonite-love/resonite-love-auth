@@ -82,6 +82,7 @@ function App() {
                 <TextField key={"userId"} type="text" label="UserId" id={"userId"}
                            inputRef={userIdRef} defaultValue={userId}/>
                 <Button variant={"outlined"} onClick={() => {
+                  if(userIdRef.current?.value === "") alert("userId is empty")
                   loginReq(userIdRef.current?.value ?? "")
                 }}
                         sx={{

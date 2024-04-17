@@ -29,7 +29,7 @@ export const TranslationProvider = ({children}: ITranslationProps) => {
                     externalLoginDesc: "外部ログインはResoniteアカウントと連携した後に使えます",
                     loginViaDiscord: "Discordでログイン",
                     loginViaResoniteLove: "resonite.loveでログイン",
-                    sentCode: "ログインリクエストを送信しました。ワンタイムパスワードを入力してください。",
+                    sentCode: "Resoniteにログインリクエストを送信しました。ワンタイムパスワードを入力してください。",
                     resendCode: "コードを再送信",
                     login: "ログイン",
                     loggedIn: "ログインしてます",
