@@ -1,15 +1,8 @@
-import {useEffect, useRef, useState} from "react";
+import {useRef} from "react";
 import {
-    BasicResponse,
-    claim,
-    discordLink,
-    discordLogin,
     discordOAuth,
     discordUnlink,
-    login,
-    loginRequest,
     logout,
-    refresh,
     claimMisskeyLink, unlinkMisskey
 } from "./api.ts";
 import {

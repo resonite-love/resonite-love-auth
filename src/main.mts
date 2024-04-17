@@ -5,6 +5,9 @@ import {importPKCS8, jwtVerify, SignJWT} from "jose"
 import cors from 'cors';
 import {Resonite} from 'resonite-client-beta';
 import {createViteDevServer} from "./viteServer.mjs";
+import {config} from 'dotenv';
+
+config()
 
 type User = {
     id: string,
@@ -697,6 +700,46 @@ app.post("/api/oauth/misskey", async (req, res) => {
     ({
         success: true
     })
+})
+
+const userSearchCache: Record<string, any> = {}
+app.get("/api/proxy/resonite/users", async (req, res) => {
+    // https://api.resonite.com/users/?name=yoshi
+    const name = req.query.name as string
+
+if(userSearchCache[name]) {
+        return userSearchCache[name]
+    }
+
+    const result = await fetch(`https://api.resonite.com/users/?name=${name}`)
+    const data = await result.json()
+    userSearchCache[name] = data
+
+    setTimeout(() => {
+        delete userSearchCache[name]
+    }, 1000 * 60 * 30)
+
+    return res.json(data)
+})
+
+const userInfoCache: Record<string, any> = {}
+app.get("/api/proxy/resonite/users/:userId", async (req, res) => {
+    const userId = req.params.userId
+
+    if(userInfoCache[userId]) {
+        return userInfoCache[userId]
+    }
+
+    const result = await fetch(`https://api.resonite.com/users/${userId}`)
+    const data = await result.json()
+    userInfoCache[userId] = data
+
+
+    setTimeout(() => {
+        delete userInfoCache[userId]
+    }, 1000 * 60 * 30)
+
+    return res.json(data)
 })
 
 app.listen(3000, () => {

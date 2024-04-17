@@ -1,7 +1,6 @@
-
-
-
 export const loginRequest = async (userId: string, lang: string) => {
+
+  if (!userId) return {success: false, message: "userId is empty"}
   const res = await fetch("/api/loginRequest", {
     method: 'POST',
     headers: {
@@ -49,7 +48,7 @@ export const refresh = async () => {
 }
 
 export const claim = async (link?: string) => {
-    const url = link ? `/api/claim?link=${link}` : "/api/claim"
+  const url = link ? `/api/claim?link=${link}` : "/api/claim"
 
   const res = await fetch(url, {
     headers: {
@@ -90,7 +89,7 @@ export const discordOAuth = async () => {
   })
 
   const result = await res.json()
-  if(result.success) {
+  if (result.success) {
     window.location.href = result.url + window.location
   }
 }
@@ -134,50 +133,50 @@ export const discordLogin = async (code: string) => {
 }
 
 export const claimMisskeyLink = async () => {
-    const res = await fetch("/api/oauth/misskey/claimAuthLink", {
-        headers: {
-        'Content-Type': 'application/json'
-        },
-    })
+  const res = await fetch("/api/oauth/misskey/claimAuthLink", {
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  })
 
-    const result = await res.json()
-    return result
+  const result = await res.json()
+  return result
 }
 
 export const linkMisskey = async (code: string) => {
-    const res = await fetch("/api/oauth/misskey/link", {
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({code: code})
-    })
+  const res = await fetch("/api/oauth/misskey/link", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({code: code})
+  })
 
-    const result = await res.json()
-    return result
+  const result = await res.json()
+  return result
 }
 
 export const unlinkMisskey = async () => {
-    const res = await fetch("/api/oauth/misskey", {
-        method: 'DELETE',
-        headers: {
-        'Content-Type': 'application/json'
-        },
-    })
+  const res = await fetch("/api/oauth/misskey", {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  })
 
-    const result = await res.json()
-    return result
+  const result = await res.json()
+  return result
 }
 
 export const loginWithMisskey = async (code: string) => {
-    const res = await fetch("/api/oauth/misskey", {
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({code: code})
-    })
+  const res = await fetch("/api/oauth/misskey", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({code: code})
+  })
 
-    const result = await res.json()
-    return result
+  const result = await res.json()
+  return result
 }
