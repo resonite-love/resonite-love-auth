@@ -73,7 +73,7 @@ function App() {
               }}
             >
               <Typography component='h1' variant='h5'>
-                R.L Auth
+                ResoAuth
               </Typography>
               <Box sx={{mt: 1, display: "flex", flexDirection: "column", width: "80%", gap: "10px"}}>
 

@@ -9,8 +9,7 @@ export const loginRequest = async (userId: string, lang: string) => {
     body: JSON.stringify({userId: userId, lang})
   })
 
-  const result = await res.json()
-  return result
+  return await res.json()
 }
 
 export const login = async (token: string) => {
@@ -22,8 +21,7 @@ export const login = async (token: string) => {
     body: JSON.stringify({token: token})
   })
 
-  const result = await res.json()
-  return result
+  return await res.json()
 }
 
 export type BasicResponse = {
@@ -77,8 +75,7 @@ export const getUserInfo = async () => {
     },
   })
 
-  const result = await res.json()
-  return result
+  return await res.json()
 }
 
 export const discordOAuth = async () => {
@@ -103,8 +100,7 @@ export const discordLink = async (code: string) => {
     body: JSON.stringify({code: code, redirectUri: window.location.origin + "/"})
   })
 
-  const result = await res.json()
-  return result
+  return await res.json()
 }
 
 export const discordUnlink = async () => {
@@ -115,8 +111,7 @@ export const discordUnlink = async () => {
     },
   })
 
-  const result = await res.json()
-  return result
+  return await res.json()
 }
 
 export const discordLogin = async (code: string) => {
@@ -128,8 +123,7 @@ export const discordLogin = async (code: string) => {
     body: JSON.stringify({code: code, redirectUri: window.location.origin + "/"})
   })
 
-  const result = await res.json()
-  return result
+  return await res.json()
 }
 
 export const claimMisskeyLink = async () => {
@@ -139,8 +133,7 @@ export const claimMisskeyLink = async () => {
     },
   })
 
-  const result = await res.json()
-  return result
+  return await res.json()
 }
 
 export const linkMisskey = async (code: string) => {
@@ -152,8 +145,7 @@ export const linkMisskey = async (code: string) => {
     body: JSON.stringify({code: code})
   })
 
-  const result = await res.json()
-  return result
+  return await res.json()
 }
 
 export const unlinkMisskey = async () => {
@@ -164,8 +156,7 @@ export const unlinkMisskey = async () => {
     },
   })
 
-  const result = await res.json()
-  return result
+  return await res.json()
 }
 
 export const loginWithMisskey = async (code: string) => {
@@ -177,6 +168,25 @@ export const loginWithMisskey = async (code: string) => {
     body: JSON.stringify({code: code})
   })
 
-  const result = await res.json()
-  return result
+  return await res.json()
+}
+
+export const getResoniteUserByUserId = async (userId: string) => {
+  const res = await fetch(`/api/proxy/resonite/users/${userId}`, {
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  })
+
+  return await res.json()
+}
+
+export const searchResoniteUser = async (query: string) => {
+  const res = await fetch(`/api/proxy/resonite/users?name=${query}`, {
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  })
+
+  return await res.json()
 }
