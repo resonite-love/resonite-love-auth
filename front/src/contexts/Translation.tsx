@@ -25,6 +25,7 @@ export const TranslationProvider = ({children}: ITranslationProps) => {
             case "ja":
                 setT({
                     loginViaResonite: "Resoniteでログイン・登録",
+                    userPlaceholder: "Resoniteユーザを選択",
                     externalLoginLabel: "外部ログイン",
                     externalLoginDesc: "外部ログインはResoniteアカウントと連携した後に使えます",
                     loginViaDiscord: "Discordでログイン",
@@ -38,12 +39,12 @@ export const TranslationProvider = ({children}: ITranslationProps) => {
                     unlinkDiscord: "Discord連携を解除",
                     linkMisskey: "misskey.resonite.love連携",
                     unlinkMisskey: "misskey.resonite.love連携を解除",
-
                 })
                 break
             case "en":
                 setT({
                     loginViaResonite: "Login/Register with Resonite",
+                    userPlaceholder: "Select a Resonite user",
                     externalLoginLabel: "External Login",
                     externalLoginDesc: "External login is available after linking with Resonite account",
                     loginViaDiscord: "Login with Discord",
@@ -62,6 +63,7 @@ export const TranslationProvider = ({children}: ITranslationProps) => {
             case "ko":
                 setT({
                     loginViaResonite: "Resonite로 로그인/등록",
+                    userPlaceholder: "Resonite 사용자 선택",
                     externalLoginLabel: "외부 로그인",
                     externalLoginDesc: "외부 로그인은 Resonite 계정과 연결한 후 사용할 수 있습니다",
                     loginViaDiscord: "Discord로 로그인",

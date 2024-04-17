@@ -19,6 +19,7 @@ import {
 import {useTranslation} from "./contexts/Translation.tsx";
 import {Header} from "./components/Header.tsx";
 import {useAppState} from "./contexts/Application.tsx";
+import UserSearch from "./components/UserSearch.tsx";
 
 
 function App() {
@@ -30,12 +31,12 @@ function App() {
     userId,
     loginReq,
     login,
+    setUserId,
     username
   } = useAppState()
   const {t} = useTranslation()
 
 
-  const userIdRef = useRef<HTMLInputElement>(null)
   const loginTokenRef = useRef<HTMLInputElement>(null)
 
   if (!loaded) return (<div>loading...</div>)
@@ -76,14 +77,14 @@ function App() {
                 ResoAuth
               </Typography>
               <Box sx={{mt: 1, display: "flex", flexDirection: "column", width: "80%", gap: "10px"}}>
-
-                <TextField key={"username"} type="text" label="username" id={"username"} disabled={true}
-                           value={username}/>
-                <TextField key={"userId"} type="text" label="UserId" id={"userId"}
-                           inputRef={userIdRef} defaultValue={userId}/>
+                <UserSearch setUserId={setUserId} defaultUserId={userId}/>
+                {/*<TextField key={"username"} type="text" label="username" id={"username"} disabled={true}*/}
+                {/*           value={username}/>*/}
+                {/*<TextField key={"userId"} type="text" label="UserId" id={"userId"}*/}
+                {/*           inputRef={userIdRef} defaultValue={userId}/>*/}
                 <Button variant={"outlined"} onClick={() => {
-                  if(userIdRef.current?.value === "") alert("userId is empty")
-                  loginReq(userIdRef.current?.value ?? "")
+                  // if(userIdRef.current?.value === "") alert("userId is empty")
+                  loginReq(userId)
                 }}
                         sx={{
                           background: "linear-gradient(45deg, #d3d15f 20%, #4bc74e 40%, #d86464 60%, #9e55cd 80%, #52b1d4 100%)",
@@ -145,7 +146,7 @@ function App() {
                   <TextField key={"token"} type="text" placeholder="OneTimePassword" id={"token"}
                              inputRef={loginTokenRef}/>
                   <Button variant={"outlined"} onClick={() => {
-                    loginReq(userIdRef.current?.value ?? "")
+                    loginReq(userId)
                   }}>{t.resendCode}</Button>
                   <Button variant={"outlined"} onClick={() => {
                     login(loginTokenRef.current?.value ?? "")

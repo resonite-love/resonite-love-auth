@@ -23,6 +23,7 @@ export interface IAppState {
     userInfo: any;
 
     userId: string;
+    setUserId: (userId: string) => void;
     username: string;
     loaded: boolean;
 
@@ -41,7 +42,10 @@ export const AppStateProvider = ({children}: IAppProps) => {
     const [loginState, setLoginState] = useState<LoginState>("notLoggedIn")
     const [userInfo, setUserInfo] = useState<any>(null)
     const [userId, setUserId] = useState("")
+
+    // deprecated
     const [username, setUsername] = useState("")
+
     const [loaded, setLoaded] = useState(false)
 
     const {language, setLanguage} = useTranslation()
@@ -247,7 +251,7 @@ export const AppStateProvider = ({children}: IAppProps) => {
     }
 
     const login = (loginToken: string) => {
-        setLoginState("loggedIn")
+        // setLoginState("loggedIn")
         apiLogin(loginToken).then(res => {
             if (res.success) {
                 setLoginState("loggedIn")
@@ -265,6 +269,7 @@ export const AppStateProvider = ({children}: IAppProps) => {
             setLoginState,
             userInfo,
             userId,
+            setUserId,
             username,
             loaded,
             loginReq,
