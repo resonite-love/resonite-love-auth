@@ -20,6 +20,7 @@ import {useTranslation} from "./contexts/Translation.tsx";
 import {Header} from "./components/Header.tsx";
 import {useAppState} from "./contexts/Application.tsx";
 import UserSearch from "./components/UserSearch.tsx";
+import {UserInfo} from "./components/UserInfo.tsx";
 
 
 function App() {
@@ -159,67 +160,7 @@ function App() {
     <>
       <Header/>
       <CssBaseline/>
-      <Container component='main' maxWidth='xs'>
-        <Typography component='h1' variant='h5'>
-          {t.loggedIn}
-        </Typography>
-        {userInfo && (<>
-          <p>ResoniteUserId: {userInfo?.resoniteUserId}</p>
-          <p>discordId: {userInfo?.discordId ?? "not connected"}</p>
-          <p>misskeyId: {userInfo?.misskeyId ?? "not connected"}</p>
-
-          {userInfo?.discordId ? (<>
-            <Button variant={"outlined"} onClick={
-              () => {
-                discordUnlink().then(res => {
-                  if (res.success) {
-                    console.log(res.data)
-                    // めんどくさいのでリロード
-                    location.reload()
-                  } else {
-                    alert(res.message)
-                    location.reload()
-                  }
-                })
-              }
-            }>{t.unlinkDiscord}
-            </Button>
-          </>) : (<>
-            <Button variant={"outlined"} onClick={() => {
-              discordOAuth()
-            }}>{t.linkDiscord}
-            </Button>
-          </>)}
-
-        </>)}
-        {userInfo?.misskeyId ? (<>
-          <Button variant={"outlined"} onClick={() => {
-            unlinkMisskey().then(res => {
-              if (res.success) {
-                location.reload()
-              }
-            })
-          }}>
-            {t.unlinkMisskey}
-          </Button>
-        </>) : (<>
-          <Button variant={"outlined"} onClick={() => {
-            claimMisskeyLink().then(res => {
-              if (res.success) {
-                location.href = res.url
-              }
-            })
-          }}>
-            {t.linkMisskey}
-          </Button>
-        </>)}
-        <Button variant={"outlined"} onClick={() => {
-          logout().then(res => {
-            if (res.success) setLoginState("notLoggedIn")
-          })
-        }}>{t.logout}
-        </Button>
-      </Container>
+      <UserInfo />
     </>
   )
 }

@@ -737,6 +737,8 @@ const userInfoCache: Record<string, any> = {}
 app.get("/api/proxy/resonite/users/:userId", async (req, res) => {
   const userId = req.params.userId
 
+  console.log(userId)
+
   if (userInfoCache[userId]) {
     return res.json(userInfoCache[userId])
   }

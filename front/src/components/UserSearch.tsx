@@ -2,24 +2,14 @@ import {Autocomplete, Avatar, Box, Grid, TextField, Typography} from "@mui/mater
 import {useEffect, useRef, useState} from "react";
 import {getResoniteUserByUserId, searchResoniteUser} from "../api.ts";
 import {useTranslation} from "../contexts/Translation.tsx";
+import {parseResDB, ResoniteUser} from "../lib/share.ts";
 
 function LocationOnIcon(props: { sx: { color: string } }) {
   return null;
 }
 
-type ResoniteUser = {
-  id: string
-  username: string
-  profile: {
-    iconUrl: string
-  }
-}
 
-const parseResDB = (url: string) => {
-  const u = url.replace("resdb:///", "https://assets.resonite.com/")
-  // remove extension
-  return u.replace(/\.[^/.]+$/, "")
-}
+
 
 export type UserSearchProps = {
   defaultUserId?: string
