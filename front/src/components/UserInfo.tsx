@@ -19,7 +19,7 @@ import {useTranslation} from "../contexts/Translation.tsx";
 const calcDateDiff = (date: Date) => {
   const diff = Date.now() - date.getTime()
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  return `${days}日前`
+  return `${days}`
 }
 
 
@@ -37,7 +37,7 @@ export const UserInfo = () => {
   } = useAppState()
   const {t} = useTranslation()
 
-  const [resontieUserInfo, setResontieUserInfo] = useState<ResoniteUser>(null)
+  const [resontieUserInfo, setResontieUserInfo] = useState<ResoniteUser | null>(null)
 
   useEffect(() => {
     console.log(userInfo)
@@ -70,12 +70,12 @@ export const UserInfo = () => {
                   </Box>
                 </Box>
                 <Box sx={{padding: "0 1rem"}}>
-                  <Typography variant='caption'>Resonite登録日</Typography>
-                  <Typography variant='body1'>{(new Date(resontieUserInfo?.registrationDate)).toLocaleString()} ({calcDateDiff(new Date(resontieUserInfo?.registrationDate))})</Typography>
+                  <Typography variant='caption'>Resonite {t.registeredDate}</Typography>
+                  <Typography variant='body1'>{(new Date(resontieUserInfo?.registrationDate)).toLocaleString()} ({calcDateDiff(new Date(resontieUserInfo?.registrationDate))}) {t.daysAgo}</Typography>
                   {resontieUserInfo?.migratedData && (
                     <>
-                      <Typography variant='caption'>NeosVR登録日</Typography>
-                      <Typography variant='body1'>{(new Date(resontieUserInfo?.migratedData.registrationDate)).toLocaleString()} ({calcDateDiff(new Date(resontieUserInfo?.migratedData.registrationDate))})</Typography>
+                      <Typography variant='caption'>NeosVR {t.registeredDate}</Typography>
+                      <Typography variant='body1'>{(new Date(resontieUserInfo?.migratedData.registrationDate)).toLocaleString()} ({calcDateDiff(new Date(resontieUserInfo?.migratedData.registrationDate))}) {t.daysAgo}</Typography>
                     </>)
                   }
                 </Box>
@@ -95,7 +95,7 @@ export const UserInfo = () => {
         <Grid item xs={12} sm={6} md={8}>
             <Card>
               <CardContent>
-                <Typography variant='h5'>連携設定</Typography>
+                <Typography variant='h5'>{t.linkSettings}</Typography>
                 <Box sx={{display: "flex", gap: 1}}>
                   <Card sx={{backgroundColor: "#7289da", minWidth: 300}}>
                     <CardContent>
@@ -104,7 +104,7 @@ export const UserInfo = () => {
 
                         {userInfo?.discordId ? (
                           <>
-                            <Typography variant='body1' color={"white"}>Discord連携済み</Typography>
+                            <Typography variant='body1' color={"white"}>Discord {t.linked}</Typography>
                             <Button variant={"outlined"} sx={{backgroundColor: "white"}}  onClick={
                               () => {
                                 discordUnlink().then(res => {
@@ -121,7 +121,7 @@ export const UserInfo = () => {
                             }>{t.unlinkDiscord}
                             </Button>
                           </>) : (<>
-                          <Typography variant='body1' color={"white"}>Discord未連携</Typography>
+                          <Typography variant='body1' color={"white"}>Discord {t.noLinked}</Typography>
                           <Button variant={"outlined"} sx={{backgroundColor: "white"}} onClick={() => {
                             discordOAuth()
                           }}>{t.linkDiscord}
@@ -136,7 +136,7 @@ export const UserInfo = () => {
                       <Box sx={{display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 2}}>
 
                         {userInfo?.misskeyId ? (<>
-                          <Typography variant='body1' color={"white"}>Misskey連携済み</Typography>
+                          <Typography variant='body1' color={"white"}>Misskey {t.linked}</Typography>
                           <Button variant={"outlined"} sx={{backgroundColor: "white"}} onClick={() => {
                             unlinkMisskey().then(res => {
                               if (res.success) {
@@ -147,7 +147,7 @@ export const UserInfo = () => {
                             {t.unlinkMisskey}
                           </Button>
                         </>) : (<>
-                          <Typography variant='body1' color={"white"}>Misskey未連携</Typography>
+                          <Typography variant='body1' color={"white"}>Misskey {t.noLinked}</Typography>
                           <Button variant={"outlined"} sx={{backgroundColor: "white"}} onClick={() => {
                             claimMisskeyLink().then(res => {
                               if (res.success) {
