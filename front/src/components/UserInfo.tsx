@@ -83,7 +83,9 @@ export const UserInfo = () => {
             </CardContent>
             <CardActions>
               <Button variant={"outlined"} sx={{backgroundColor: "white"}} onClick={() => {
-                logout()
+                logout().then(res => {
+                  if (res.success) setLoginState("notLoggedIn")
+                })
               }}>
                 {t.logout}
               </Button>
