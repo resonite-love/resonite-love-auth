@@ -76,14 +76,9 @@ function App() {
               <Typography component='h1' variant='h5'>
                 ResoAuth
               </Typography>
-              <Box sx={{mt: 1, display: "flex", flexDirection: "column", width: "80%", gap: "10px"}}>
+              <Box sx={{mt: 2, display: "flex", flexDirection: "column", width: "80%", gap: "10px"}}>
                 <UserSearch setUserId={setUserId} defaultUserId={userId}/>
-                {/*<TextField key={"username"} type="text" label="username" id={"username"} disabled={true}*/}
-                {/*           value={username}/>*/}
-                {/*<TextField key={"userId"} type="text" label="UserId" id={"userId"}*/}
-                {/*           inputRef={userIdRef} defaultValue={userId}/>*/}
                 <Button variant={"outlined"} onClick={() => {
-                  // if(userIdRef.current?.value === "") alert("userId is empty")
                   loginReq(userId)
                 }}
                         sx={{

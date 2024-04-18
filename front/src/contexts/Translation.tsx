@@ -26,6 +26,7 @@ export const TranslationProvider = ({children}: ITranslationProps) => {
                 setT({
                     loginViaResonite: "Resoniteでログイン・登録",
                     userPlaceholder: "Resoniteユーザを選択",
+                    noUserFound: "ユーザが見つかりません",
                     externalLoginLabel: "外部ログイン",
                     externalLoginDesc: "外部ログインはResoniteアカウントと連携した後に使えます",
                     loginViaDiscord: "Discordでログイン",
@@ -45,6 +46,7 @@ export const TranslationProvider = ({children}: ITranslationProps) => {
                 setT({
                     loginViaResonite: "Login/Register with Resonite",
                     userPlaceholder: "Select a Resonite user",
+                    noUserFound: "No user found",
                     externalLoginLabel: "External Login",
                     externalLoginDesc: "External login is available after linking with Resonite account",
                     loginViaDiscord: "Login with Discord",
@@ -64,6 +66,7 @@ export const TranslationProvider = ({children}: ITranslationProps) => {
                 setT({
                     loginViaResonite: "Resonite로 로그인/등록",
                     userPlaceholder: "Resonite 사용자 선택",
+                    noUserFound: "사용자를 찾을 수 없습니다",
                     externalLoginLabel: "외부 로그인",
                     externalLoginDesc: "외부 로그인은 Resonite 계정과 연결한 후 사용할 수 있습니다",
                     loginViaDiscord: "Discord로 로그인",

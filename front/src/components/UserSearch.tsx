@@ -83,7 +83,7 @@ export const UserSearch = ({setUserId, defaultUserId} : UserSearchProps) => {
       filterSelectedOptions
       popupIcon={null}
       value={value}
-      noOptionsText="No user found"
+      noOptionsText={t.noUserFound}
       onChange={(event: any, newValue: ResoniteUser | null) => {
         setOptions(newValue ? [newValue, ...options] : options);
         setValue(newValue);
