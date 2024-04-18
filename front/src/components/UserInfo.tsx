@@ -1,6 +1,17 @@
-import {Avatar, Box, Button, Card, CardContent, CardHeader, Container, Grid, Typography} from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  Container,
+  Grid,
+  Typography
+} from "@mui/material";
 import {useAppState} from "../contexts/Application.tsx";
-import {claimMisskeyLink, discordOAuth, discordUnlink, getResoniteUserByUserId, unlinkMisskey} from "../api.ts";
+import {claimMisskeyLink, discordOAuth, discordUnlink, getResoniteUserByUserId, logout, unlinkMisskey} from "../api.ts";
 import {useEffect, useState} from "react";
 import {parseResDB, ResoniteUser} from "../lib/share.ts";
 import {useTranslation} from "../contexts/Translation.tsx";
@@ -70,6 +81,13 @@ export const UserInfo = () => {
                 </Box>
               </Box>
             </CardContent>
+            <CardActions>
+              <Button variant={"outlined"} sx={{backgroundColor: "white"}} onClick={() => {
+                logout()
+              }}>
+                {t.logout}
+              </Button>
+            </CardActions>
           </Card>
         </Grid>
         <Grid item xs={12} sm={6} md={8}>
